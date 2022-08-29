@@ -4,14 +4,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CachedImageView extends StatelessWidget {
-  final String url;
+  final String? url;
 
   const CachedImageView({Key? key, required this.url}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (url == null) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.primaries[Random().nextInt(Colors.primaries.length)]
+              .withOpacity(0.2),
+        ),
+      );
+    }
     return CachedNetworkImage(
-      imageUrl: url,
+      imageUrl: url!,
       imageBuilder: (context, imageProvider) => Container(
         decoration: BoxDecoration(
           image: DecorationImage(

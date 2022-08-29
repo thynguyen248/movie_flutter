@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/data_provider/api_client.dart';
@@ -31,7 +30,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   @override
   void deactivate() {
-    // Pauses video while navigating to next page.
     _ytController.pause();
     super.deactivate();
   }
@@ -50,7 +48,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         appBar: AppBar(
           title: Text(widget.movieModel.title),
           iconTheme: const IconThemeData(
-            color: Colors.white, //change your color here
+            color: Colors.white,
           ),
         ),
         body: BlocConsumer<MovieDetailBloc, MovieDetailState>(
@@ -122,8 +120,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         },
                       )),
                   Positioned(
-                    top:
-                        _videoThumbnailSize().height - _posterSize().height / 4,
+                    top: _videoThumbnailSize().height - _posterOverlaidHeight(),
                     left: 16,
                     width: _posterSize().width,
                     height: _posterSize().height,
@@ -131,8 +128,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
                       child: CachedImageView(
-                          url: ApiClient.posterUrl +
-                              state.movieDetailModel.posterPath),
+                          url: state.movieDetailModel.posterUrl()),
                     ),
                   ),
                   Positioned(
@@ -164,7 +160,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   Positioned(
                       top: _videoThumbnailSize().height +
                           _posterSize().height -
-                          _posterSize().height / 4 +
+                          _posterOverlaidHeight() +
                           16,
                       left: 0,
                       child: Padding(
@@ -209,4 +205,5 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   Size _videoThumbnailSize() => Size(MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.width * 9 / 16);
   Size _posterSize() => const Size(120, 120 * 3 / 2);
+  double _posterOverlaidHeight() => _posterSize().height / 4;
 }

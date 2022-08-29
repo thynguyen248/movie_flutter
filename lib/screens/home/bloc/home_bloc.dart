@@ -8,46 +8,94 @@ import '../../../model/movie_model.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Repository _repository;
-  int _currentPage = 0;
-  bool _hasMoreData = false;
+  int _currentPopularMoviesPage = 0;
+  int _currentUpcomingMoviesPage = 0;
+  bool _hasMoreUpcomingMovies = false;
+  bool _hasMorePopularMovies = false;
   List<MovieModel> _popularMovies = [];
+  List<MovieModel> _upcomingMovies = [];
 
   final int _maxPage = 5;
 
   HomeBloc(this._repository) : super(const HomeInitialState()) {
-    on<LoadPopularMoviesEvent>((_onFetchPopularMoviesEvent));
+    on<LoadPopularMoviesEvent>((_onLoadPopularMoviesEvent));
+    on<LoadUpcomingMoviesEvent>((_onLoadUpcomingMoviesEvent));
     on<LoadMorePopularMoviesEvent>((_onLoadMorePopularMoviesEvent));
+    on<LoadMoreUpcomingMoviesEvent>((_onLoadMoreUpcomingMoviesEvent));
   }
 
-  void _onFetchPopularMoviesEvent(
+  void _onLoadPopularMoviesEvent(
     LoadPopularMoviesEvent event,
     Emitter<HomeState> emitter,
   ) async {
-    emitter(const HomeLoadingState());
+    if (state is HomeInitialState) {
+      emitter(const HomeLoadingState());
+    }
     MovieResponseModel movieResponseModel =
         await _repository.getPopularMovies();
-    _currentPage = movieResponseModel.currentPage;
+    _currentPopularMoviesPage = movieResponseModel.currentPage;
     _popularMovies += movieResponseModel.movies;
-    _hasMoreData = _currentPage < movieResponseModel.totalPages;
-    emitter(HomeSuccessFetchPopularMoviesState(
-        movies: _popularMovies, hasMoreData: _hasMoreData));
+    _hasMorePopularMovies =
+        _currentPopularMoviesPage < movieResponseModel.totalPages;
+    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+        _hasMoreUpcomingMovies, _hasMorePopularMovies));
   }
 
   void _onLoadMorePopularMoviesEvent(
     LoadMorePopularMoviesEvent event,
     Emitter<HomeState> emitter,
   ) async {
-    if (!_hasMoreData) {
-      emitter(HomeSuccessFetchPopularMoviesState(
-          movies: _popularMovies, hasMoreData: _hasMoreData));
+    if (!_hasMorePopularMovies) {
+      emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
       return;
     }
     MovieResponseModel movieResponseModel =
-        await _repository.getPopularMovies(page: _currentPage + 1);
-    _currentPage = movieResponseModel.currentPage;
+        await _repository.getPopularMovies(page: _currentPopularMoviesPage + 1);
+    _currentPopularMoviesPage = movieResponseModel.currentPage;
     _popularMovies += movieResponseModel.movies;
-    _hasMoreData = _currentPage < _maxPage;
-    emitter(HomeSuccessFetchPopularMoviesState(
-        movies: _popularMovies, hasMoreData: _hasMoreData));
+    _hasMorePopularMovies = _currentPopularMoviesPage < _maxPage;
+    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+        _hasMoreUpcomingMovies, _hasMorePopularMovies));
   }
+
+  void _onLoadUpcomingMoviesEvent(
+    LoadUpcomingMoviesEvent event,
+    Emitter<HomeState> emitter,
+  ) async {
+    if (state is HomeInitialState) {
+      emitter(const HomeLoadingState());
+    }
+    MovieResponseModel movieResponseModel =
+        await _repository.getUpcomingMovies();
+    _currentUpcomingMoviesPage = movieResponseModel.currentPage;
+    _upcomingMovies += movieResponseModel.movies;
+    _hasMoreUpcomingMovies =
+        _currentUpcomingMoviesPage < movieResponseModel.totalPages;
+    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+  }
+
+  void _onLoadMoreUpcomingMoviesEvent(
+    LoadMoreUpcomingMoviesEvent event,
+    Emitter<HomeState> emitter,
+  ) async {
+    if (!_hasMoreUpcomingMovies) {
+      emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
+      return;
+    }
+    MovieResponseModel movieResponseModel = await _repository.getUpcomingMovies(
+        page: _currentUpcomingMoviesPage + 1);
+    _currentUpcomingMoviesPage = movieResponseModel.currentPage;
+    _upcomingMovies += movieResponseModel.movies;
+    _hasMoreUpcomingMovies = _currentUpcomingMoviesPage < _maxPage;
+    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+  }
+
+  int listItemCount() =>
+      _popularMovies.length +
+      (_hasMorePopularMovies ? 1 : 0) +
+      (_upcomingMovies.isNotEmpty ? 1 : 0);
 }

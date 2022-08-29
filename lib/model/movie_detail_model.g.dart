@@ -9,7 +9,7 @@ part of 'movie_detail_model.dart';
 MovieDetailModel _$MovieDetailModelFromJson(Map<String, dynamic> json) =>
     MovieDetailModel(
       json['id'] as int,
-      json['poster_path'] as String,
+      json['poster_path'] as String?,
       json['backdrop_path'] as String,
       json['title'] as String,
       json['overview'] as String,

@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_flutter/model/video_response_model.dart';
 
+import '../data_provider/api_client.dart';
+
 part 'movie_detail_model.g.dart';
 
 @JsonSerializable()
@@ -12,7 +14,7 @@ class MovieDetailModel {
   final int movieId;
 
   @JsonKey(name: 'poster_path')
-  final String posterPath;
+  final String? posterPath;
 
   @JsonKey(name: 'backdrop_path')
   final String backDropPath;
@@ -35,4 +37,7 @@ class MovieDetailModel {
       _$MovieDetailModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieDetailModelToJson(this);
+
+  String? posterUrl() =>
+      posterPath == null ? null : ApiClient.posterUrl + posterPath!;
 }

@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/screens/home/bloc/home_bloc.dart';
 import 'package:movie_flutter/screens/home/bloc/home_event.dart';
 import 'package:movie_flutter/screens/home/bloc/home_state.dart';
-import 'package:movie_flutter/screens/movie_detail/widget/movie_detail_screen.dart';
-
-import 'movie_list_item.dart';
+import 'package:movie_flutter/screens/home/widget/movie_list_item.dart';
+import 'package:movie_flutter/screens/home/widget/upcoming_movies_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -43,58 +42,70 @@ class _HomeScreenState extends State<HomeScreen> {
         primarySwatch: Colors.blueGrey,
       ),
       home: Scaffold(
-        appBar: AppBar(title: const Text("Movies")),
+        appBar: AppBar(
+          title: const Text("Movies"),
+        ),
         body: BlocConsumer<HomeBloc, HomeState>(
           listener: (context, state) {},
           builder: (context, state) {
             if (state is HomeInitialState) {
-              bloc.add(LoadPopularMoviesEvent());
+              bloc.add(const LoadPopularMoviesEvent());
+              bloc.add(const LoadUpcomingMoviesEvent());
             }
             if (state is HomeLoadingState) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state is HomeSuccessFetchPopularMoviesState) {
-              return SafeArea(
-                child: Center(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      if (index == state.movies.length) {
-                        if (state.hasMoreData) {
-                          return const SizedBox(
-                            height: 100.0,
-                            width: 100.0,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        } else {
-                          return const SizedBox(height: 1);
-                        }
-                      } else {
-                        return InkWell(
-                          child: MovieListItem(movieModel: state.movies[index]),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MovieDetailScreen(
-                                      movieModel: state.movies[index])),
-                            );
-                          },
-                        );
-                      }
-                    },
-                    itemCount: state.movies.length + 1,
-                  ),
-                ),
+            if (state is HomeSuccessLoadDataState) {
+              return ListView.builder(
+                controller: _scrollController,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    if (state.upcomingMovies.isNotEmpty) {
+                      return UpcomingMoviesListView(
+                          movies: state.upcomingMovies,
+                          hasMoreData: state.hasMoreUpcomingMovies,
+                          onScrollToEnd: () =>
+                              bloc.add(const LoadMoreUpcomingMoviesEvent()));
+                    }
+                    return const SizedBox(
+                      height: 1,
+                    );
+                  }
+                  index -= 1;
+                  if (index == state.popularMovies.length) {
+                    if (state.hasMorePopularMovies) {
+                      return const SizedBox(
+                        height: 100.0,
+                        width: 100.0,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    return const SizedBox(
+                      height: 1,
+                    );
+                  }
+                  return MovieListItem(
+                    movieModel: state.popularMovies[index],
+                    header: index == 0 ? "POPULAR" : "",
+                  );
+                },
+                itemCount: bloc.listItemCount(),
               );
             }
-            return Container(color: Colors.white);
+            return Container(
+              color: Colors.white,
+            );
           },
         ),
       ),
     );
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 1), curve: Curves.linear);
   }
 }

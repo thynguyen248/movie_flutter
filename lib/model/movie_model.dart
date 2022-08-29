@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../data_provider/api_client.dart';
+
 part 'movie_model.g.dart';
 
 @JsonSerializable()
@@ -10,7 +12,7 @@ class MovieModel {
   final int movieId;
 
   @JsonKey(name: 'poster_path')
-  final String posterPath;
+  final String? posterPath;
 
   @JsonKey(name: 'title')
   final String title;
@@ -22,4 +24,7 @@ class MovieModel {
       _$MovieModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieModelToJson(this);
+
+  String? posterUrl() =>
+      posterPath == null ? null : ApiClient.posterUrl + posterPath!;
 }

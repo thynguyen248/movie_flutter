@@ -2,43 +2,39 @@ import 'package:equatable/equatable.dart';
 import 'package:movie_flutter/model/movie_model.dart';
 
 abstract class HomeState extends Equatable {
-  final List<MovieModel> movies;
-  const HomeState({required this.movies});
+  final List<MovieModel> upcomingMovies;
+  final List<MovieModel> popularMovies;
+  final bool hasMoreUpcomingMovies;
+  final bool hasMorePopularMovies;
+
+  const HomeState(this.upcomingMovies, this.popularMovies,
+      this.hasMoreUpcomingMovies, this.hasMorePopularMovies);
 
   @override
-  List<Object?> get props => [movies.map((e) => e.movieId).toList()];
+  List<Object?> get props => [
+        popularMovies.map((e) => e.movieId).toList(),
+        upcomingMovies.map((e) => e.movieId).toList(),
+        hasMoreUpcomingMovies,
+        hasMorePopularMovies
+      ];
 }
 
 class HomeInitialState extends HomeState {
-  const HomeInitialState() : super(movies: const []);
+  const HomeInitialState() : super(const [], const [], false, false);
 }
 
 class HomeLoadingState extends HomeState {
-  const HomeLoadingState() : super(movies: const []);
+  const HomeLoadingState() : super(const [], const [], false, false);
 }
 
-class HomeErrorFetchPopularMoviesState extends HomeState {
+class HomeErrorState extends HomeState {
   final String errorMessage;
-  const HomeErrorFetchPopularMoviesState({
+  const HomeErrorState({
     required this.errorMessage,
-  }) : super(movies: const []);
-
-  @override
-  List<Object?> get props => [...super.props, errorMessage];
+  }) : super(const [], const [], false, false);
 }
 
-class HomeSuccessFetchPopularMoviesState extends HomeState {
-  final bool hasMoreData;
-  const HomeSuccessFetchPopularMoviesState(
-      {required List<MovieModel> movies, required this.hasMoreData})
-      : super(movies: movies);
-
-  @override
-  List<Object?> get props => [...super.props, hasMoreData];
-}
-
-class HomeLoadingMoreState extends HomeState {
-  const HomeLoadingMoreState({
-    required List<MovieModel> movies,
-  }) : super(movies: movies);
+class HomeSuccessLoadDataState extends HomeState {
+  const HomeSuccessLoadDataState(super.upcomingMovies, super.popularMovies,
+      super.hasMoreUpcomingMovies, super.hasMorePopularMovies);
 }

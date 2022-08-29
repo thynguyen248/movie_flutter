@@ -7,6 +7,12 @@ class Repository {
 
   Repository(this.apiClient);
 
+  Future<MovieResponseModel> getUpcomingMovies({int page = 1}) async {
+    final MovieResponseModel upcomingMovies =
+        await apiClient.getUpcomingMovies(page: page);
+    return upcomingMovies;
+  }
+
   Future<MovieResponseModel> getPopularMovies({int page = 1}) async {
     final MovieResponseModel popularMovies =
         await apiClient.getPopularMovies(page: page);
