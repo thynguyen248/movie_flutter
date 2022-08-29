@@ -25,6 +25,6 @@ class MovieModel {
 
   Map<String, dynamic> toJson() => _$MovieModelToJson(this);
 
-  String? posterUrl() =>
+  String? get posterUrl =>
       posterPath == null ? null : ApiClient.posterUrl + posterPath!;
 }

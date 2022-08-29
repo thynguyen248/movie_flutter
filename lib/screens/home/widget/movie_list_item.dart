@@ -65,7 +65,7 @@ class MovieListItem extends StatelessWidget {
                       //   ApiClient.posterUrl + movieModel.posterPath,
                       //   fit: BoxFit.cover,
                       // ),
-                      child: CachedImageView(url: movieModel.posterUrl()),
+                      child: CachedImageView(url: movieModel.posterUrl),
                     ),
                   ),
                   Padding(

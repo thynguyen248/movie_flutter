@@ -15,5 +15,5 @@ class VideoModel {
 
   Map<String, dynamic> toJson() => _$VideoModelToJson(this);
 
-  String thumbnailUrl() => "https://img.youtube.com/vi/$key/hqdefault.jpg";
+  String get thumbnailUrl => "https://img.youtube.com/vi/$key/hqdefault.jpg";
 }

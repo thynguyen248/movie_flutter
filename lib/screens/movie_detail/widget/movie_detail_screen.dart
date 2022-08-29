@@ -120,7 +120,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
                       child: CachedImageView(
-                          url: state.movieDetailModel.posterUrl()),
+                          url: state.movieDetailModel.posterUrl),
                     ),
                   ),
                   Positioned(
