@@ -19,11 +19,15 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   void _onGetMovieDetailEvent(
       GetMovieDetailEvent event, Emitter<MovieDetailState> emit) async {
     emit(const MovieDetailLoadingState());
-    MovieDetailModel movieDetailModel =
-        await _repository.getMovieDetail(movieId: _movieId);
-    _movieDetailModel = movieDetailModel;
-    emit(MovieDetailLoadedState(
-        movieDetailModel: movieDetailModel, videoLoaded: false));
+    try {
+      MovieDetailModel movieDetailModel =
+          await _repository.getMovieDetail(movieId: _movieId);
+      _movieDetailModel = movieDetailModel;
+      emit(MovieDetailLoadedState(
+          movieDetailModel: movieDetailModel, videoLoaded: false));
+    } catch (e) {
+      emit(MovieDetailErrorState(errorMessage: e.toString()));
+    }
   }
 
   void _onVideoLoadedEvent(

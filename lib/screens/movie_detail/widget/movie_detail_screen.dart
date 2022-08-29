@@ -21,22 +21,12 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  late YoutubePlayerController _ytController;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  YoutubePlayerController? _ytController;
 
   @override
   void deactivate() {
-    _ytController.pause();
+    _ytController?.pause();
     super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -56,14 +46,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             if (state is MovieDetailLoadedState) {
               _ytController = YoutubePlayerController(
                   initialVideoId:
-                      state.movieDetailModel.videos.results.first.key);
-              BlocProvider.of<MovieDetailBloc>(context).add(VideoLoadedEvent());
+                      state.movieDetailModel.videos?.results.first.key ?? "");
+              BlocProvider.of<MovieDetailBloc>(context)
+                  .add(const VideoLoadedEvent());
+            }
+            if (state is MovieDetailErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("There's something wrong")));
             }
           },
           builder: (context, state) {
             if (state is MovieDetailInitialState) {
               BlocProvider.of<MovieDetailBloc>(context)
-                  .add(GetMovieDetailEvent());
+                  .add(const GetMovieDetailEvent());
             }
             if (state is MovieDetailLoadingState) {
               return const Center(child: CircularProgressIndicator());
@@ -79,16 +74,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
                         builder: (context, state) {
                           if (state is MovieDetailLoadedState) {
-                            if (state.videoLoaded) {
+                            if (state.videoLoaded && _ytController != null) {
                               return YoutubePlayer(
-                                controller: _ytController,
+                                controller: _ytController!,
                                 showVideoProgressIndicator: true,
                                 progressIndicatorColor: Colors.lightBlueAccent,
                                 topActions: <Widget>[
                                   const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Text(
-                                      _ytController.metadata.title,
+                                      _ytController?.metadata.title ?? "",
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 18.0,
@@ -106,17 +101,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 onReady: () {},
                                 onEnded: (YoutubeMetaData _md) {
                                   _ytController
-                                      .seekTo(const Duration(seconds: 0));
+                                      ?.seekTo(const Duration(seconds: 0));
                                 },
                               );
-                            } else {
-                              return CachedImageView(
-                                  url: state.videoThumbnailUrl());
                             }
+                            return CachedImageView(
+                                url: state.videoThumbnailUrl());
                           }
-                          return Container(
-                            color: Colors.orange,
-                          );
+                          return const SizedBox.shrink();
                         },
                       )),
                   Positioned(
@@ -195,7 +187,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 ],
               );
             }
-            return Container(color: Colors.white);
+            return const SizedBox.shrink();
           },
         ),
       ),

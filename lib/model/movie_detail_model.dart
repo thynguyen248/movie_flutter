@@ -17,7 +17,7 @@ class MovieDetailModel {
   final String? posterPath;
 
   @JsonKey(name: 'backdrop_path')
-  final String backDropPath;
+  final String? backDropPath;
 
   @JsonKey(name: 'title')
   final String title;
@@ -31,7 +31,7 @@ class MovieDetailModel {
   @JsonKey(name: 'vote_average')
   final double rating;
 
-  final VideoResponseModel videos;
+  final VideoResponseModel? videos;
 
   factory MovieDetailModel.fromJson(Map<String, dynamic> json) =>
       _$MovieDetailModelFromJson(json);

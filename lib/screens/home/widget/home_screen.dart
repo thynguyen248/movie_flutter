@@ -46,7 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
           title: const Text("Movies"),
         ),
         body: BlocConsumer<HomeBloc, HomeState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is HomeErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("There's something wrong")));
+            }
+          },
           builder: (context, state) {
             if (state is HomeInitialState) {
               bloc.add(const LoadPopularMoviesEvent());
@@ -68,11 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           onScrollToEnd: () =>
                               bloc.add(const LoadMoreUpcomingMoviesEvent()));
                     }
-                    return const SizedBox(
-                      height: 1,
-                    );
+                    return const SizedBox.shrink();
                   }
-                  index -= 1;
                   if (index == state.popularMovies.length) {
                     if (state.hasMorePopularMovies) {
                       return const SizedBox(
@@ -83,21 +85,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     }
-                    return const SizedBox(
-                      height: 1,
-                    );
+                    return const SizedBox.shrink();
                   }
                   return MovieListItem(
-                    movieModel: state.popularMovies[index],
-                    header: index == 0 ? "POPULAR" : "",
+                    movieModel: state.popularMovies[index - 1],
+                    header: index == 1 ? "POPULAR" : "",
                   );
                 },
                 itemCount: bloc.listItemCount(),
               );
             }
-            return Container(
-              color: Colors.white,
-            );
+            return const SizedBox.shrink();
           },
         ),
       ),

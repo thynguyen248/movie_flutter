@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/model/movie_response_model.dart';
 import 'package:movie_flutter/repository/repository.dart';
@@ -18,80 +19,100 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final int _maxPage = 5;
 
   HomeBloc(this._repository) : super(const HomeInitialState()) {
-    on<LoadPopularMoviesEvent>((_onLoadPopularMoviesEvent));
-    on<LoadUpcomingMoviesEvent>((_onLoadUpcomingMoviesEvent));
-    on<LoadMorePopularMoviesEvent>((_onLoadMorePopularMoviesEvent));
-    on<LoadMoreUpcomingMoviesEvent>((_onLoadMoreUpcomingMoviesEvent));
+    on<LoadPopularMoviesEvent>((_onLoadPopularMoviesEvent),
+        transformer: restartable());
+    on<LoadUpcomingMoviesEvent>((_onLoadUpcomingMoviesEvent),
+        transformer: restartable());
+    on<LoadMorePopularMoviesEvent>((_onLoadMorePopularMoviesEvent),
+        transformer: restartable());
+    on<LoadMoreUpcomingMoviesEvent>((_onLoadMoreUpcomingMoviesEvent),
+        transformer: restartable());
   }
 
   void _onLoadPopularMoviesEvent(
     LoadPopularMoviesEvent event,
-    Emitter<HomeState> emitter,
+    Emitter<HomeState> emit,
   ) async {
     if (state is HomeInitialState) {
-      emitter(const HomeLoadingState());
+      emit(const HomeLoadingState());
     }
-    MovieResponseModel movieResponseModel =
-        await _repository.getPopularMovies();
-    _currentPopularMoviesPage = movieResponseModel.currentPage;
-    _popularMovies += movieResponseModel.movies;
-    _hasMorePopularMovies =
-        _currentPopularMoviesPage < movieResponseModel.totalPages;
-    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    try {
+      MovieResponseModel movieResponseModel =
+          await _repository.getPopularMovies();
+      _currentPopularMoviesPage = movieResponseModel.currentPage;
+      _popularMovies += movieResponseModel.movies;
+      _hasMorePopularMovies =
+          _currentPopularMoviesPage < movieResponseModel.totalPages;
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    } catch (e) {
+      emit(HomeErrorState(errorMessage: e.toString()));
+    }
   }
 
   void _onLoadMorePopularMoviesEvent(
     LoadMorePopularMoviesEvent event,
-    Emitter<HomeState> emitter,
+    Emitter<HomeState> emit,
   ) async {
     if (!_hasMorePopularMovies) {
-      emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
       return;
     }
-    MovieResponseModel movieResponseModel =
-        await _repository.getPopularMovies(page: _currentPopularMoviesPage + 1);
-    _currentPopularMoviesPage = movieResponseModel.currentPage;
-    _popularMovies += movieResponseModel.movies;
-    _hasMorePopularMovies = _currentPopularMoviesPage < _maxPage;
-    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    try {
+      MovieResponseModel movieResponseModel = await _repository
+          .getPopularMovies(page: _currentPopularMoviesPage + 1);
+      _currentPopularMoviesPage = movieResponseModel.currentPage;
+      _popularMovies += movieResponseModel.movies;
+      _hasMorePopularMovies = _currentPopularMoviesPage < _maxPage;
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    } catch (e) {
+      emit(HomeErrorState(errorMessage: e.toString()));
+    }
   }
 
   void _onLoadUpcomingMoviesEvent(
     LoadUpcomingMoviesEvent event,
-    Emitter<HomeState> emitter,
+    Emitter<HomeState> emit,
   ) async {
     if (state is HomeInitialState) {
-      emitter(const HomeLoadingState());
+      emit(const HomeLoadingState());
     }
-    MovieResponseModel movieResponseModel =
-        await _repository.getUpcomingMovies();
-    _currentUpcomingMoviesPage = movieResponseModel.currentPage;
-    _upcomingMovies += movieResponseModel.movies;
-    _hasMoreUpcomingMovies =
-        _currentUpcomingMoviesPage < movieResponseModel.totalPages;
-    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    try {
+      MovieResponseModel movieResponseModel =
+          await _repository.getUpcomingMovies();
+      _currentUpcomingMoviesPage = movieResponseModel.currentPage;
+      _upcomingMovies += movieResponseModel.movies;
+      _hasMoreUpcomingMovies =
+          _currentUpcomingMoviesPage < movieResponseModel.totalPages;
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    } catch (e) {
+      emit(HomeErrorState(errorMessage: e.toString()));
+    }
   }
 
   void _onLoadMoreUpcomingMoviesEvent(
     LoadMoreUpcomingMoviesEvent event,
-    Emitter<HomeState> emitter,
+    Emitter<HomeState> emit,
   ) async {
     if (!_hasMoreUpcomingMovies) {
-      emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
       return;
     }
-    MovieResponseModel movieResponseModel = await _repository.getUpcomingMovies(
-        page: _currentUpcomingMoviesPage + 1);
-    _currentUpcomingMoviesPage = movieResponseModel.currentPage;
-    _upcomingMovies += movieResponseModel.movies;
-    _hasMoreUpcomingMovies = _currentUpcomingMoviesPage < _maxPage;
-    emitter(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-        _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    try {
+      MovieResponseModel movieResponseModel = await _repository
+          .getUpcomingMovies(page: _currentUpcomingMoviesPage + 1);
+      _currentUpcomingMoviesPage = movieResponseModel.currentPage;
+      _upcomingMovies += movieResponseModel.movies;
+      _hasMoreUpcomingMovies = _currentUpcomingMoviesPage < _maxPage;
+      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
+          _hasMoreUpcomingMovies, _hasMorePopularMovies));
+    } catch (e) {
+      emit(HomeErrorState(errorMessage: e.toString()));
+    }
   }
 
   int listItemCount() =>
