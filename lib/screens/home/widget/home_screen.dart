@@ -75,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                     return const SizedBox.shrink();
                   }
+                  index -= 1;
                   if (index == state.popularMovies.length) {
                     if (state.hasMorePopularMovies) {
                       return const SizedBox(
@@ -88,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return const SizedBox.shrink();
                   }
                   return MovieListItem(
-                    movieModel: state.popularMovies[index - 1],
-                    header: index == 1 ? "POPULAR" : "",
+                    movieModel: state.popularMovies[index],
+                    header: index == 0 ? "POPULAR" : "",
                   );
                 },
                 itemCount: bloc.listItemCount(),
