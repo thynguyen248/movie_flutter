@@ -44,9 +44,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         body: BlocConsumer<MovieDetailBloc, MovieDetailState>(
           listener: (context, state) {
             if (state is MovieDetailLoadedState) {
-              _ytController = YoutubePlayerController(
-                  initialVideoId:
-                      state.movieDetailModel.videos?.results.first.key ?? "");
+              if (state.movieDetailModel.videoKey != null) {
+                _ytController = YoutubePlayerController(
+                    initialVideoId: state.movieDetailModel.videoKey!);
+              }
               BlocProvider.of<MovieDetailBloc>(context)
                   .add(const VideoLoadedEvent());
             }
@@ -69,8 +70,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   Positioned(
                       top: 0,
                       left: 0,
-                      width: _videoThumbnailSize().width,
-                      height: _videoThumbnailSize().height,
+                      width: _videoThumbnailSize.width,
+                      height: _videoThumbnailSize.height,
                       child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
                         builder: (context, state) {
                           if (state is MovieDetailLoadedState) {
@@ -112,10 +113,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         },
                       )),
                   Positioned(
-                    top: _videoThumbnailSize().height - _posterOverlaidHeight(),
+                    top: _videoThumbnailSize.height - _posterOverlaidHeight,
                     left: 16,
-                    width: _posterSize().width,
-                    height: _posterSize().height,
+                    width: _posterSize.width,
+                    height: _posterSize.height,
                     child: ClipRRect(
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
@@ -124,8 +125,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ),
                   ),
                   Positioned(
-                      top: _videoThumbnailSize().height + 16,
-                      left: 16 + _posterSize().width + 16,
+                      top: _videoThumbnailSize.height + 16,
+                      left: 16 + _posterSize.width + 16,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,9 +151,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                           ])),
                   Positioned(
-                      top: _videoThumbnailSize().height +
-                          _posterSize().height -
-                          _posterOverlaidHeight() +
+                      top: _videoThumbnailSize.height +
+                          _posterSize.height -
+                          _posterOverlaidHeight +
                           16,
                       left: 0,
                       child: Padding(
@@ -194,8 +195,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     );
   }
 
-  Size _videoThumbnailSize() => Size(MediaQuery.of(context).size.width,
+  Size get _videoThumbnailSize => Size(MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.width * 9 / 16);
-  Size _posterSize() => const Size(120, 120 * 3 / 2);
-  double _posterOverlaidHeight() => _posterSize().height / 4;
+  Size get _posterSize => const Size(120, 120 * 3 / 2);
+  double get _posterOverlaidHeight => _posterSize.height / 4;
 }

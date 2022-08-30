@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/model/movie_response_model.dart';
@@ -41,8 +43,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await _repository.getPopularMovies();
       _currentPopularMoviesPage = movieResponseModel.currentPage;
       _popularMovies += movieResponseModel.movies;
-      _hasMorePopularMovies =
-          _currentPopularMoviesPage < movieResponseModel.totalPages;
+      _hasMorePopularMovies = _currentPopularMoviesPage <
+          min(movieResponseModel.totalPages, _maxPage);
       emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
     } catch (e) {
@@ -55,8 +57,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     if (!_hasMorePopularMovies) {
-      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-          _hasMoreUpcomingMovies, _hasMorePopularMovies));
       return;
     }
     try {
@@ -64,7 +64,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .getPopularMovies(page: _currentPopularMoviesPage + 1);
       _currentPopularMoviesPage = movieResponseModel.currentPage;
       _popularMovies += movieResponseModel.movies;
-      _hasMorePopularMovies = _currentPopularMoviesPage < _maxPage;
+      _hasMorePopularMovies = _currentPopularMoviesPage <
+          min(movieResponseModel.totalPages, _maxPage);
       emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
     } catch (e) {
@@ -84,8 +85,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await _repository.getUpcomingMovies();
       _currentUpcomingMoviesPage = movieResponseModel.currentPage;
       _upcomingMovies += movieResponseModel.movies;
-      _hasMoreUpcomingMovies =
-          _currentUpcomingMoviesPage < movieResponseModel.totalPages;
+      _hasMoreUpcomingMovies = _currentUpcomingMoviesPage <
+          min(movieResponseModel.totalPages, _maxPage);
       emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
     } catch (e) {
@@ -98,8 +99,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     if (!_hasMoreUpcomingMovies) {
-      emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
-          _hasMoreUpcomingMovies, _hasMorePopularMovies));
       return;
     }
     try {
@@ -107,7 +106,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .getUpcomingMovies(page: _currentUpcomingMoviesPage + 1);
       _currentUpcomingMoviesPage = movieResponseModel.currentPage;
       _upcomingMovies += movieResponseModel.movies;
-      _hasMoreUpcomingMovies = _currentUpcomingMoviesPage < _maxPage;
+      _hasMoreUpcomingMovies = _currentUpcomingMoviesPage <
+          min(movieResponseModel.totalPages, _maxPage);
       emit(HomeSuccessLoadDataState(_upcomingMovies, _popularMovies,
           _hasMoreUpcomingMovies, _hasMorePopularMovies));
     } catch (e) {

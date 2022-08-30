@@ -40,4 +40,6 @@ class MovieDetailModel {
 
   String? get posterUrl =>
       posterPath == null ? null : ApiClient.posterUrl + posterPath!;
+
+  String? get videoKey => videos?.results.first.key;
 }

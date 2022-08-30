@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_flutter/model/movie_model.dart';
+import 'package:movie_flutter/util/random_color.dart';
 
-import '../../../data_provider/api_client.dart';
 import '../../movie_detail/widget/movie_detail_screen.dart';
 import 'cached_image_view.dart';
 
@@ -44,7 +44,13 @@ class UpcomingMoviesListView extends StatelessWidget {
               height: 10,
             ),
             scrollDirection: Axis.horizontal,
-            controller: _scrollController..addListener(onScrollToEnd),
+            controller: _scrollController
+              ..addListener(() {
+                if (_scrollController.offset ==
+                    _scrollController.position.maxScrollExtent) {
+                  onScrollToEnd();
+                }
+              }),
             shrinkWrap: true,
             itemBuilder: (context, index) {
               if (index == movies.length) {
@@ -60,13 +66,12 @@ class UpcomingMoviesListView extends StatelessWidget {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(5.0)),
                           child: Container(
-                            color: Colors.indigo.withOpacity(0.5),
+                            color: RandomColor.primaryColor.withOpacity(0.2),
                           ),
                         )),
                   );
-                } else {
-                  return const SizedBox(height: 1);
                 }
+                return const SizedBox.shrink();
               } else {
                 return InkWell(
                   child: SizedBox(
@@ -79,9 +84,7 @@ class UpcomingMoviesListView extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(5.0)),
-                          child: CachedImageView(
-                              url: ApiClient.posterUrl +
-                                  (movies[index].posterPath ?? "")),
+                          child: CachedImageView(url: movies[index].posterUrl),
                         )),
                   ),
                   onTap: () {

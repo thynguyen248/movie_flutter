@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_flutter/util/random_color.dart';
 
 class CachedImageView extends StatelessWidget {
   final String? url;
@@ -33,8 +34,7 @@ class CachedImageView extends StatelessWidget {
         ),
       ),
       placeholder: (context, url) => Container(
-        color: Colors.primaries[Random().nextInt(Colors.primaries.length)]
-            .withOpacity(0.2),
+        color: RandomColor.primaryColor.withOpacity(0.2),
       ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       fadeOutDuration: const Duration(milliseconds: 300),
