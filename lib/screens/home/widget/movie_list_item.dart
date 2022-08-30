@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movie_flutter/reusable/shadow_card.dart';
 
 import '../../../model/movie_model.dart';
+import '../../../reusable/cached_image_view.dart';
 import '../../movie_detail/widget/movie_detail_screen.dart';
-import 'cached_image_view.dart';
 
 class MovieListItem extends StatelessWidget {
   final MovieModel movieModel;
@@ -38,81 +39,57 @@ class MovieListItem extends StatelessWidget {
             vertical: 4,
           ),
           child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        MovieDetailScreen(movieModel: movieModel)),
-              );
-            },
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5.0),
-                      topRight: Radius.circular(5.0),
-                    ),
-                    child: AspectRatio(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MovieDetailScreen(movieModel: movieModel)),
+                );
+              },
+              child: ShadowCard(
+                child: Column(
+                  children: [
+                    AspectRatio(
                       aspectRatio: 16 / 9,
-                      // child: Image.network(
-                      //   ApiClient.posterUrl + movieModel.posterPath,
-                      //   fit: BoxFit.cover,
-                      // ),
                       child: CachedImageView(url: movieModel.posterUrl),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 16,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movieModel.title,
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w200,
-                              color: Colors.blueGrey),
-                          maxLines: 1,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Row(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            movieModel.title,
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w200,
+                                color: Colors.blueGrey),
+                            maxLines: 1,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
                             children: [
                               Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 8,
-                                  ),
-                                  child: Text(
-                                    movieModel.releaseDate,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w200,
-                                        color: Colors.black87),
-                                  ),
+                                child: Text(
+                                  movieModel.releaseDate,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.black87),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                  ],
+                ),
+              )),
         ),
       ],
     );

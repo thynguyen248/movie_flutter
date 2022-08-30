@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:movie_flutter/model/movie_model.dart';
-import 'package:movie_flutter/util/random_color.dart';
+import 'package:movie_flutter/reusable/shadow_card.dart';
 
+import '../../../reusable/cached_image_view.dart';
+import '../../../utils/Utils.dart';
 import '../../movie_detail/widget/movie_detail_screen.dart';
-import 'cached_image_view.dart';
 
 class UpcomingMoviesListView extends StatelessWidget {
   final List<MovieModel> movies;
@@ -56,37 +57,21 @@ class UpcomingMoviesListView extends StatelessWidget {
               if (index == movies.length) {
                 if (hasMoreData) {
                   return SizedBox(
-                    width: 200.0,
-                    child: Card(
-                        elevation: 5.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+                      width: 200.0,
+                      child: ShadowCard(
+                        child: Container(
+                          color: Utils.randomColor.withOpacity(0.2),
                         ),
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
-                          child: Container(
-                            color: RandomColor.primaryColor.withOpacity(0.2),
-                          ),
-                        )),
-                  );
+                      ));
                 }
                 return const SizedBox.shrink();
               } else {
                 return InkWell(
                   child: SizedBox(
-                    width: _listHeight,
-                    child: Card(
-                        elevation: 5.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
-                          child: CachedImageView(url: movies[index].posterUrl),
-                        )),
-                  ),
+                      width: _listHeight,
+                      child: ShadowCard(
+                        child: CachedImageView(url: movies[index].posterUrl),
+                      )),
                   onTap: () {
                     Navigator.push(
                       context,

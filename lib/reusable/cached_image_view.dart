@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_flutter/util/random_color.dart';
+import 'package:movie_flutter/utils/Utils.dart';
 
 class CachedImageView extends StatelessWidget {
   final String? url;
@@ -14,8 +12,7 @@ class CachedImageView extends StatelessWidget {
     if (url == null) {
       return Container(
         decoration: BoxDecoration(
-          color: Colors.primaries[Random().nextInt(Colors.primaries.length)]
-              .withOpacity(0.2),
+          color: Utils.randomColor.withOpacity(0.2),
         ),
       );
     }
@@ -34,7 +31,7 @@ class CachedImageView extends StatelessWidget {
         ),
       ),
       placeholder: (context, url) => Container(
-        color: RandomColor.primaryColor.withOpacity(0.2),
+        color: Utils.randomColor.withOpacity(0.2),
       ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
       fadeOutDuration: const Duration(milliseconds: 300),

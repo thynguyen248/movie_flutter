@@ -9,7 +9,7 @@ import 'package:movie_flutter/screens/movie_detail/bloc/movie_detail_event.dart'
 import 'package:movie_flutter/screens/movie_detail/bloc/movie_detail_state.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../../home/widget/cached_image_view.dart';
+import '../../../reusable/cached_image_view.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final MovieModel movieModel;
@@ -158,32 +158,35 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       left: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width - 26,
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  state.movieDetailModel.title,
-                                  style: const TextStyle(
-                                      fontSize: 27,
-                                      fontWeight: FontWeight.w200,
-                                      color: Colors.black),
-                                  maxLines: 1,
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  state.movieDetailModel.overview,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w200,
-                                      color: Colors.blueGrey),
-                                ),
-                              ]),
-                        ),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                state.movieDetailModel.title,
+                                style: const TextStyle(
+                                    fontSize: 27,
+                                    fontWeight: FontWeight.w200,
+                                    color: Colors.black),
+                                maxLines: 1,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      state.movieDetailModel.overview,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w200,
+                                          color: Colors.blueGrey),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ]),
                       )),
                 ],
               );
