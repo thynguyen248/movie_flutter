@@ -55,33 +55,32 @@ class UpcomingMoviesListView extends StatelessWidget {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               if (index == movies.length) {
-                if (hasMoreData) {
-                  return SizedBox(
+                return Visibility(
+                  visible: hasMoreData,
+                  child: SizedBox(
                       width: 200.0,
                       child: ShadowCard(
                         child: Container(
                           color: Utils.randomColor.withOpacity(0.2),
                         ),
-                      ));
-                }
-                return const SizedBox.shrink();
-              } else {
-                return InkWell(
-                  child: SizedBox(
-                      width: _listHeight,
-                      child: ShadowCard(
-                        child: CachedImageView(url: movies[index].posterUrl),
                       )),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MovieDetailScreen(movieModel: movies[index])),
-                    );
-                  },
                 );
               }
+              return InkWell(
+                child: SizedBox(
+                    width: _listHeight,
+                    child: ShadowCard(
+                      child: CachedImageView(url: movies[index].posterUrl),
+                    )),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MovieDetailScreen(movieModel: movies[index])),
+                  );
+                },
+              );
             },
             itemCount: movies.length + 1,
           ),

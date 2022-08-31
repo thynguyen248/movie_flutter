@@ -66,27 +66,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    if (state.upcomingMovies.isNotEmpty) {
-                      return UpcomingMoviesListView(
+                    return Visibility(
+                      visible: state.upcomingMovies.isNotEmpty,
+                      child: UpcomingMoviesListView(
                           movies: state.upcomingMovies,
                           hasMoreData: state.hasMoreUpcomingMovies,
                           onScrollToEnd: () =>
-                              bloc.add(const LoadMoreUpcomingMoviesEvent()));
-                    }
-                    return const SizedBox.shrink();
+                              bloc.add(const LoadMoreUpcomingMoviesEvent())),
+                    );
                   }
                   index -= 1;
                   if (index == state.popularMovies.length) {
-                    if (state.hasMorePopularMovies) {
-                      return const SizedBox(
+                    return Visibility(
+                      visible: state.hasMorePopularMovies,
+                      child: const SizedBox(
                         height: 100.0,
                         width: 100.0,
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),
-                      );
-                    }
-                    return const SizedBox.shrink();
+                      ),
+                    );
                   }
                   return MovieListItem(
                     movieModel: state.popularMovies[index],

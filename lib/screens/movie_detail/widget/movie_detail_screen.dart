@@ -128,7 +128,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       top: _videoThumbnailSize.height + 16,
                       left: 16 + _posterSize.width + 16,
                       child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -153,40 +152,38 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   Positioned(
                       top: _videoThumbnailSize.height +
                           _posterSize.height -
-                          _posterOverlaidHeight +
-                          16,
+                          _posterOverlaidHeight,
                       left: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.movieDetailModel.title,
-                                style: const TextStyle(
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.w200,
-                                    color: Colors.black),
-                                maxLines: 1,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      state.movieDetailModel.overview,
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w200,
-                                          color: Colors.blueGrey),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ]),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, top: 32, right: 8, bottom: 0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state.movieDetailModel.title,
+                                  style: const TextStyle(
+                                      fontSize: 27,
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.black),
+                                  maxLines: 1,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  state.movieDetailModel.overview,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w200,
+                                      color: Colors.blueGrey),
+                                )
+                              ]),
+                        ),
                       )),
                 ],
               );
