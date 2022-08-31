@@ -33,7 +33,9 @@ class CachedImageView extends StatelessWidget {
       placeholder: (context, url) => Container(
         color: Utils.randomColor.withOpacity(0.2),
       ),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+      errorWidget: (context, url, error) => Container(
+        color: Utils.randomColor.withOpacity(0.2),
+      ),
       fadeOutDuration: const Duration(milliseconds: 300),
       fadeInDuration: const Duration(milliseconds: 300),
     );

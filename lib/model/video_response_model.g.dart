@@ -8,8 +8,8 @@ part of 'video_response_model.dart';
 
 VideoResponseModel _$VideoResponseModelFromJson(Map<String, dynamic> json) =>
     VideoResponseModel(
-      (json['results'] as List<dynamic>)
-          .map((e) => VideoModel.fromJson(e as Map<String, dynamic>))
+      (json['results'] as List<dynamic>?)
+          ?.map((e) => VideoModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

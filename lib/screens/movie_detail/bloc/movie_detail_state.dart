@@ -32,9 +32,6 @@ class MovieDetailLoadedState extends MovieDetailState {
   const MovieDetailLoadedState(
       {required this.movieDetailModel, required this.videoLoaded});
 
-  String videoThumbnailUrl() =>
-      movieDetailModel.videos?.results.first.thumbnailUrl ?? "";
-
   @override
   List<Object?> get props => [...super.props, videoLoaded];
 }

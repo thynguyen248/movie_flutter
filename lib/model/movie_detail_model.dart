@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_flutter/model/video_response_model.dart';
 
@@ -41,5 +42,8 @@ class MovieDetailModel {
   String? get posterUrl =>
       posterPath == null ? null : ApiClient.posterUrl + posterPath!;
 
-  String? get videoKey => videos?.results.first.key;
+  String get videoThumbnailUrl =>
+      videos?.results?.firstOrNull?.thumbnailUrl ?? "";
+
+  String? get videoKey => videos?.results?.firstOrNull?.key;
 }

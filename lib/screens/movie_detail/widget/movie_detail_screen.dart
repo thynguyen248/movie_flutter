@@ -65,127 +65,138 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is MovieDetailLoadedState) {
-              return Stack(
-                children: [
-                  Positioned(
-                      top: 0,
-                      left: 0,
-                      width: _videoThumbnailSize.width,
-                      height: _videoThumbnailSize.height,
-                      child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
-                        builder: (context, state) {
-                          if (state is MovieDetailLoadedState) {
-                            if (state.videoLoaded && _ytController != null) {
-                              return YoutubePlayer(
-                                controller: _ytController!,
-                                showVideoProgressIndicator: true,
-                                progressIndicatorColor: Colors.lightBlueAccent,
-                                topActions: <Widget>[
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      _ytController?.metadata.title ?? "",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18.0,
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width,
+                      maxHeight: MediaQuery.of(context).size.height),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                          top: 0,
+                          left: 0,
+                          width: _videoThumbnailSize.width,
+                          height: _videoThumbnailSize.height,
+                          child: BlocBuilder<MovieDetailBloc, MovieDetailState>(
+                            builder: (context, state) {
+                              if (state is MovieDetailLoadedState) {
+                                if (state.videoLoaded &&
+                                    _ytController != null) {
+                                  return YoutubePlayer(
+                                    controller: _ytController!,
+                                    showVideoProgressIndicator: true,
+                                    progressIndicatorColor:
+                                        Colors.lightBlueAccent,
+                                    topActions: <Widget>[
+                                      const SizedBox(width: 8.0),
+                                      Expanded(
+                                        child: Text(
+                                          _ytController?.metadata.title ?? "",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.0,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
-                                bottomActions: [
-                                  CurrentPosition(),
-                                  ProgressBar(isExpanded: true),
-                                  FullScreenButton(),
-                                ],
-                                onReady: () {},
-                                onEnded: (YoutubeMetaData _md) {
-                                  _ytController
-                                      ?.seekTo(const Duration(seconds: 0));
-                                },
-                              );
-                            }
-                            return CachedImageView(
-                                url: state.videoThumbnailUrl());
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      )),
-                  Positioned(
-                    top: _videoThumbnailSize.height - _posterOverlaidHeight,
-                    left: 16,
-                    width: _posterSize.width,
-                    height: _posterSize.height,
-                    child: ClipRRect(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(5.0)),
-                      child: CachedImageView(
-                          url: state.movieDetailModel.posterUrl),
-                    ),
-                  ),
-                  Positioned(
-                      top: _videoThumbnailSize.height + 16,
-                      left: 16 + _posterSize.width + 16,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Rating: ${state.movieDetailModel.rating}",
-                              style: const TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w200,
-                                  color: Colors.black87),
-                              maxLines: 1,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              state.movieDetailModel.releaseDate,
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w200,
-                                  color: Colors.blueGrey),
-                            ),
-                          ])),
-                  Positioned(
-                      top: _videoThumbnailSize.height +
-                          _posterSize.height -
-                          _posterOverlaidHeight,
-                      left: 0,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width,
+                                    ],
+                                    bottomActions: [
+                                      CurrentPosition(),
+                                      ProgressBar(isExpanded: true),
+                                      FullScreenButton(),
+                                    ],
+                                    onReady: () {},
+                                    onEnded: (YoutubeMetaData _md) {
+                                      _ytController
+                                          ?.seekTo(const Duration(seconds: 0));
+                                    },
+                                  );
+                                }
+                                return CachedImageView(
+                                    url: state
+                                        .movieDetailModel.videoThumbnailUrl);
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          )),
+                      Positioned(
+                        top: _videoThumbnailSize.height - _posterOverlaidHeight,
+                        left: 16,
+                        width: _posterSize.width,
+                        height: _posterSize.height,
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5.0)),
+                          child: CachedImageView(
+                              url: state.movieDetailModel.posterUrl),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, top: 32, right: 8, bottom: 0),
+                      ),
+                      Positioned(
+                          top: _videoThumbnailSize.height + 16,
+                          left: 16 + _posterSize.width + 16,
                           child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  state.movieDetailModel.title,
+                                  "Rating: ${state.movieDetailModel.rating}",
                                   style: const TextStyle(
-                                      fontSize: 27,
+                                      fontSize: 30,
                                       fontWeight: FontWeight.w200,
-                                      color: Colors.black),
+                                      color: Colors.black87),
                                   maxLines: 1,
                                 ),
                                 const SizedBox(
                                   height: 5,
                                 ),
                                 Text(
-                                  state.movieDetailModel.overview,
+                                  state.movieDetailModel.releaseDate,
                                   style: const TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w200,
                                       color: Colors.blueGrey),
-                                )
-                              ]),
-                        ),
-                      )),
-                ],
+                                ),
+                              ])),
+                      Positioned(
+                          top: _videoThumbnailSize.height +
+                              _posterSize.height -
+                              _posterOverlaidHeight,
+                          left: 0,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, top: 32, right: 8, bottom: 0),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      state.movieDetailModel.title,
+                                      style: const TextStyle(
+                                          fontSize: 27,
+                                          fontWeight: FontWeight.w200,
+                                          color: Colors.black),
+                                      maxLines: 1,
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      state.movieDetailModel.overview,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w200,
+                                          color: Colors.blueGrey),
+                                    )
+                                  ]),
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
               );
             }
             return const SizedBox.shrink();

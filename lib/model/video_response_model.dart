@@ -7,7 +7,7 @@ part 'video_response_model.g.dart';
 class VideoResponseModel {
   VideoResponseModel(this.results);
 
-  final List<VideoModel> results;
+  final List<VideoModel>? results;
 
   factory VideoResponseModel.fromJson(Map<String, dynamic> json) =>
       _$VideoResponseModelFromJson(json);
