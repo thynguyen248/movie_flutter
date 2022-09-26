@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/model/movie_model.dart';
 import 'package:movie_flutter/reusable/shadow_card.dart';
 
-import '../../../reusable/cached_image_view.dart';
-import '../../../utils/Utils.dart';
-import '../../movie_detail/widget/movie_detail_screen.dart';
+import '../repository/repository.dart';
+import '../screens/movie_detail/bloc/movie_detail_bloc.dart';
+import '../screens/movie_detail/widget/movie_detail_screen.dart';
+import '../utils/Utils.dart';
+import 'cached_image_view.dart';
 
-class UpcomingMoviesListView extends StatelessWidget {
+class HorizontalMovieListView extends StatelessWidget {
+  final String title;
   final List<MovieModel> movies;
   final bool hasMoreData;
   final VoidCallback onScrollToEnd;
   final ScrollController _scrollController = ScrollController();
-  final double _listHeight = 200.0;
+  final Size itemSize;
+  final EdgeInsets insets;
 
-  UpcomingMoviesListView(
+  HorizontalMovieListView(
       {Key? key,
+      required this.title,
       required this.movies,
       required this.hasMoreData,
+      this.itemSize = const Size(200, 200),
+      this.insets = EdgeInsets.zero,
       required this.onScrollToEnd})
       : super(key: key);
 
@@ -27,20 +35,24 @@ class UpcomingMoviesListView extends StatelessWidget {
         const SizedBox(
           height: 30,
         ),
-        const ListTile(
-          title: Text(
-            "UPCOMING",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w200,
-                color: Colors.blueGrey),
-            maxLines: 1,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: insets.left),
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              title,
+              style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w200,
+                  color: Colors.blueGrey),
+              maxLines: 1,
+            ),
           ),
         ),
         SizedBox(
-          height: _listHeight,
+          height: itemSize.height,
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: insets,
             separatorBuilder: (context, index) => const SizedBox(
               height: 10,
             ),
@@ -68,7 +80,7 @@ class UpcomingMoviesListView extends StatelessWidget {
               }
               return InkWell(
                 child: SizedBox(
-                    width: _listHeight,
+                    width: itemSize.width,
                     child: ShadowCard(
                       child: CachedImageView(url: movies[index].posterUrl),
                     )),
@@ -76,8 +88,12 @@ class UpcomingMoviesListView extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            MovieDetailScreen(movieModel: movies[index])),
+                        builder: (context) => BlocProvider(
+                            lazy: false,
+                            create: (context) => MovieDetailBloc(
+                                RepositoryImpl(), movies[index].movieId),
+                            child:
+                                MovieDetailScreen(movieModel: movies[index]))),
                   );
                 },
               );

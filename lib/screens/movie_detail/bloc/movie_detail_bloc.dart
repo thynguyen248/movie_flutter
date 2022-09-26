@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:movie_flutter/model/movie_detail_model.dart';
 
 import '../../../repository/repository.dart';
@@ -12,7 +13,7 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
 
   MovieDetailBloc(this._repository, this._movieId)
       : super(const MovieDetailInitialState()) {
-    on<GetMovieDetailEvent>(_onGetMovieDetailEvent);
+    on<GetMovieDetailEvent>(_onGetMovieDetailEvent, transformer: restartable());
     on<VideoLoadedEvent>(_onVideoLoadedEvent);
   }
 

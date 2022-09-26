@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../data_provider/api_client.dart';
+import 'package:movie_flutter/data_provider/api_constants.dart';
 
 part 'movie_model.g.dart';
 
@@ -26,5 +25,5 @@ class MovieModel {
   Map<String, dynamic> toJson() => _$MovieModelToJson(this);
 
   String? get posterUrl =>
-      posterPath == null ? null : ApiClient.posterUrl + posterPath!;
+      posterPath == null ? null : ApiConstants.posterUrl + posterPath!;
 }

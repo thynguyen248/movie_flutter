@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/reusable/shadow_card.dart';
 
 import '../../../model/movie_model.dart';
+import '../../../repository/repository.dart';
 import '../../../reusable/cached_image_view.dart';
+import '../../movie_detail/bloc/movie_detail_bloc.dart';
 import '../../movie_detail/widget/movie_detail_screen.dart';
 
 class MovieListItem extends StatelessWidget {
@@ -20,8 +23,9 @@ class MovieListItem extends StatelessWidget {
         Visibility(
           visible: header.isNotEmpty,
           child: Padding(
-            padding: const EdgeInsets.only(top: 30),
+            padding: const EdgeInsets.only(top: 30, left: 10),
             child: ListTile(
+              contentPadding: EdgeInsets.zero,
               title: Text(
                 header,
                 style: const TextStyle(
@@ -36,22 +40,25 @@ class MovieListItem extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 10,
-            vertical: 4,
+            vertical: 5,
           ),
           child: InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          MovieDetailScreen(movieModel: movieModel)),
+                      builder: (context) => BlocProvider(
+                          lazy: false,
+                          create: (context) => MovieDetailBloc(
+                              RepositoryImpl(), movieModel.movieId),
+                          child: MovieDetailScreen(movieModel: movieModel))),
                 );
               },
               child: ShadowCard(
                 child: Column(
                   children: [
                     AspectRatio(
-                      aspectRatio: 16 / 9,
+                      aspectRatio: 3 / 2,
                       child: CachedImageView(url: movieModel.posterUrl),
                     ),
                     Padding(
@@ -63,9 +70,10 @@ class MovieListItem extends StatelessWidget {
                           Text(
                             movieModel.title,
                             style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w200,
-                                color: Colors.blueGrey),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w200,
+                              color: Colors.blueGrey,
+                            ),
                             maxLines: 1,
                           ),
                           const SizedBox(

@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:movie_flutter/model/movie_model.dart';
 
-abstract class HomeState extends Equatable {
+abstract class MovieListState extends Equatable {
   final List<MovieModel> upcomingMovies;
   final List<MovieModel> popularMovies;
   final bool hasMoreUpcomingMovies;
   final bool hasMorePopularMovies;
 
-  const HomeState(this.upcomingMovies, this.popularMovies,
+  const MovieListState(this.upcomingMovies, this.popularMovies,
       this.hasMoreUpcomingMovies, this.hasMorePopularMovies);
 
   @override
@@ -19,22 +19,22 @@ abstract class HomeState extends Equatable {
       ];
 }
 
-class HomeInitialState extends HomeState {
+class HomeInitialState extends MovieListState {
   const HomeInitialState() : super(const [], const [], false, false);
 }
 
-class HomeLoadingState extends HomeState {
+class HomeLoadingState extends MovieListState {
   const HomeLoadingState() : super(const [], const [], false, false);
 }
 
-class HomeErrorState extends HomeState {
+class HomeErrorState extends MovieListState {
   final String errorMessage;
   const HomeErrorState({
     required this.errorMessage,
   }) : super(const [], const [], false, false);
 }
 
-class HomeSuccessLoadDataState extends HomeState {
+class HomeSuccessLoadDataState extends MovieListState {
   const HomeSuccessLoadDataState(super.upcomingMovies, super.popularMovies,
       super.hasMoreUpcomingMovies, super.hasMorePopularMovies);
 }

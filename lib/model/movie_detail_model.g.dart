@@ -18,6 +18,10 @@ MovieDetailModel _$MovieDetailModelFromJson(Map<String, dynamic> json) =>
       json['videos'] == null
           ? null
           : VideoResponseModel.fromJson(json['videos'] as Map<String, dynamic>),
+      json['recommendations'] == null
+          ? null
+          : MovieResponseModel.fromJson(
+              json['recommendations'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MovieDetailModelToJson(MovieDetailModel instance) =>
@@ -30,4 +34,5 @@ Map<String, dynamic> _$MovieDetailModelToJson(MovieDetailModel instance) =>
       'release_date': instance.releaseDate,
       'vote_average': instance.rating,
       'videos': instance.videos,
+      'recommendations': instance.recommendations,
     };

@@ -4,12 +4,12 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_flutter/model/movie_response_model.dart';
 import 'package:movie_flutter/repository/repository.dart';
-import 'package:movie_flutter/screens/home/bloc/home_event.dart';
-import 'package:movie_flutter/screens/home/bloc/home_state.dart';
+import 'package:movie_flutter/screens/movie_list/bloc/movie_list_event.dart';
+import 'package:movie_flutter/screens/movie_list/bloc/movie_list_state.dart';
 
 import '../../../model/movie_model.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
+class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   final Repository _repository;
   int _currentPopularMoviesPage = 0;
   int _currentUpcomingMoviesPage = 0;
@@ -20,7 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   final int _maxPage = 5;
 
-  HomeBloc(this._repository) : super(const HomeInitialState()) {
+  MovieListBloc(this._repository) : super(const HomeInitialState()) {
     on<LoadPopularMoviesEvent>((_onLoadPopularMoviesEvent),
         transformer: restartable());
     on<LoadUpcomingMoviesEvent>((_onLoadUpcomingMoviesEvent),
@@ -29,11 +29,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         transformer: restartable());
     on<LoadMoreUpcomingMoviesEvent>((_onLoadMoreUpcomingMoviesEvent),
         transformer: restartable());
+    on<RefreshEvent>((_onRefreshEvent), transformer: restartable());
   }
 
   void _onLoadPopularMoviesEvent(
     LoadPopularMoviesEvent event,
-    Emitter<HomeState> emit,
+    Emitter<MovieListState> emit,
   ) async {
     if (state is HomeInitialState) {
       emit(const HomeLoadingState());
@@ -54,7 +55,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onLoadMorePopularMoviesEvent(
     LoadMorePopularMoviesEvent event,
-    Emitter<HomeState> emit,
+    Emitter<MovieListState> emit,
   ) async {
     if (!_hasMorePopularMovies) {
       return;
@@ -75,7 +76,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onLoadUpcomingMoviesEvent(
     LoadUpcomingMoviesEvent event,
-    Emitter<HomeState> emit,
+    Emitter<MovieListState> emit,
   ) async {
     if (state is HomeInitialState) {
       emit(const HomeLoadingState());
@@ -96,7 +97,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onLoadMoreUpcomingMoviesEvent(
     LoadMoreUpcomingMoviesEvent event,
-    Emitter<HomeState> emit,
+    Emitter<MovieListState> emit,
   ) async {
     if (!_hasMoreUpcomingMovies) {
       return;
@@ -115,7 +116,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  int listItemCount() =>
+  void _onRefreshEvent(
+    RefreshEvent event,
+    Emitter<MovieListState> emit,
+  ) async {
+    _currentUpcomingMoviesPage = 0;
+    _currentPopularMoviesPage = 0;
+    _upcomingMovies = [];
+    _popularMovies = [];
+    add(const LoadUpcomingMoviesEvent());
+    add(const LoadPopularMoviesEvent());
+  }
+
+  int get listItemCount =>
       _popularMovies.length +
       (_hasMorePopularMovies ? 1 : 0) +
       (_upcomingMovies.isNotEmpty ? 1 : 0);

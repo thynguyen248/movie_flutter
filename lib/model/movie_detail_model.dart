@@ -1,15 +1,24 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movie_flutter/data_provider/api_constants.dart';
 import 'package:movie_flutter/model/video_response_model.dart';
 
-import '../data_provider/api_client.dart';
+import 'movie_response_model.dart';
 
 part 'movie_detail_model.g.dart';
 
 @JsonSerializable()
 class MovieDetailModel {
-  MovieDetailModel(this.movieId, this.posterPath, this.backDropPath, this.title,
-      this.overview, this.releaseDate, this.rating, this.videos);
+  MovieDetailModel(
+      this.movieId,
+      this.posterPath,
+      this.backDropPath,
+      this.title,
+      this.overview,
+      this.releaseDate,
+      this.rating,
+      this.videos,
+      this.recommendations);
 
   @JsonKey(name: 'id')
   final int movieId;
@@ -34,13 +43,15 @@ class MovieDetailModel {
 
   final VideoResponseModel? videos;
 
+  final MovieResponseModel? recommendations;
+
   factory MovieDetailModel.fromJson(Map<String, dynamic> json) =>
       _$MovieDetailModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieDetailModelToJson(this);
 
   String? get posterUrl =>
-      posterPath == null ? null : ApiClient.posterUrl + posterPath!;
+      posterPath == null ? null : ApiConstants.posterUrl + posterPath!;
 
   String get videoThumbnailUrl =>
       videos?.results?.firstOrNull?.thumbnailUrl ?? "";
